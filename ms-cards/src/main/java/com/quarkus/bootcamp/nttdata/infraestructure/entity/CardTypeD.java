@@ -23,8 +23,8 @@ public class CardTypeD extends PanacheEntity {
   /**
    * Nombre con el cual nos referimos al tipo de tarjeta.
    * Ejemplo:
-   *     - Debito
-   *     - Credito
+   * - Debito
+   * - Credito
    */
   protected String name;
   /**

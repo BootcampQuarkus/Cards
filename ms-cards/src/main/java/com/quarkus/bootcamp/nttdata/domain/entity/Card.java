@@ -1,20 +1,12 @@
-package com.quarkus.bootcamp.nttdata.infraestructure.entity;
+package com.quarkus.bootcamp.nttdata.domain.entity;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Entidad de base de datos para las tarjetas.
- *
- * @pdiaz
- */
-@Entity
-@Table(name = "card")
 @Data
 @NoArgsConstructor
-public class CardD extends PanacheEntity {
+public class Card {
+  protected Long id;
   /**
    * Numero de la tarjeta de 16 digitos en grupos de 4 caracteres
    * separados por "-".
@@ -49,22 +41,10 @@ public class CardD extends PanacheEntity {
   /**
    * Tipo de tarjeta.
    */
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "cardTypeId")
-  protected CardTypeD cardTypeD;
+  protected CardType cardType;
   /**
-   * Fecha en la que se creó la linea de crédito.
+   * Identificador del tipo de tarjeta.
    */
-  @Column(nullable = true)
-  protected String createdAt = null;
-  /**
-   * Fecha de la ultima actualización la linea de crédito.
-   */
-  @Column(nullable = true)
-  protected String updatedAt = null;
-  /**
-   * Fecha en la que se eliminó la linea de crédito.
-   */
-  @Column(nullable = true)
-  protected String deletedAt = null;
+  protected Long cardTypeId;
+
 }

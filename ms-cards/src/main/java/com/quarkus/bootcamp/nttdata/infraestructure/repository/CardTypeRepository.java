@@ -1,12 +1,15 @@
 package com.quarkus.bootcamp.nttdata.infraestructure.repository;
+
 import com.quarkus.bootcamp.nttdata.infraestructure.entity.CardTypeD;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.NotFoundException;
+
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+
 @ApplicationScoped
 public class CardTypeRepository implements IRepository<CardTypeD> {
   /**
@@ -19,6 +22,7 @@ public class CardTypeRepository implements IRepository<CardTypeD> {
   public List<CardTypeD> getAll() {
     return CardTypeD.listAll();
   }
+
   /**
    * Se encarga de devolver el elemento solicitado por el identificador
    * siempre y cuando no este eliminado (softDelete).
@@ -34,6 +38,7 @@ public class CardTypeRepository implements IRepository<CardTypeD> {
     }
     return cardTypeD.get();
   }
+
   /**
    * Guarda el elemento en la base de datos (creacion y actualización).
    *
@@ -52,6 +57,7 @@ public class CardTypeRepository implements IRepository<CardTypeD> {
     cardTypeD.persist();
     return cardTypeD;
   }
+
   /**
    * Realiza la eliminación logica del elemento
    *
