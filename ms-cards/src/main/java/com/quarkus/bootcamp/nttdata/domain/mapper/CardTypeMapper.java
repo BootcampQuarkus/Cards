@@ -7,6 +7,13 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class CardTypeMapper implements IMapper<CardType, CardTypeD> {
+  /**
+   * Transforma el objeto de CardType a CardTypeD.
+   *
+   * @param cardType Objeto de la clase CardType que se desea transformar.
+   * @return Objeto de la clase CardTypeD.
+   * @throws NullPointerException
+   */
   @Override
   public CardTypeD toDto(CardType cardType) throws NullPointerException {
     CardTypeD cardTypeD = new CardTypeD();
@@ -14,6 +21,13 @@ public class CardTypeMapper implements IMapper<CardType, CardTypeD> {
     return cardTypeD;
   }
 
+  /**
+   * Transforma el objeto de CardTypeD a CardType.
+   *
+   * @param cardTypeD Objeto de la clase CardTypeD que se desea transformar.
+   * @return Objeto de la clase CardType.
+   * @throws NullPointerException
+   */
   @Override
   public CardType toEntity(CardTypeD cardTypeD) throws NullPointerException {
     CardType cardType = new CardType();

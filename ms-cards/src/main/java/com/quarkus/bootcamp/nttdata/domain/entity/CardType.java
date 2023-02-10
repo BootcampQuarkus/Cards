@@ -3,6 +3,7 @@ package com.quarkus.bootcamp.nttdata.domain.entity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -19,5 +20,5 @@ public class CardType {
   /**
    * Collección de tarjetas pertenecientes a este tipo.
    */
-  protected Set<Card> cards;
+  protected List<Card> cards;
 }

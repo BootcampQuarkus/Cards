@@ -29,10 +29,12 @@ public class CardTypeService implements IService<CardType, CardType> {
           .filter(p -> (p.getDeletedAt() == null))
           .map(p -> {
             CardType cardType = ctMapper.toEntity(p);
-            cardType.setCards(p.getCardDs()
-                  .stream()
-                  .map(q -> cMapper.toEntity(q))
-                  .collect(Collectors.toSet()));
+            var a = p.getCardDs();
+            var b = a.stream();
+            var c = b.filter(r -> (r.getDeletedAt() == null));
+            var d = c.map(q -> cMapper.toEntity(q));
+            var e = d.toList();
+            cardType.setCards(e);
             return cardType;
           })
           .toList();
@@ -47,7 +49,7 @@ public class CardTypeService implements IService<CardType, CardType> {
             cardType.setCards(p.getCardDs()
                   .stream()
                   .map(q -> cMapper.toEntity(q))
-                  .collect(Collectors.toSet()));
+                  .toList());
             return cardType;
           })
           .orElseThrow(() -> new NotFoundException());
