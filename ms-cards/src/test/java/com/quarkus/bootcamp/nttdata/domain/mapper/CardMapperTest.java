@@ -1,7 +1,6 @@
 package com.quarkus.bootcamp.nttdata.domain.mapper;
 
 import com.quarkus.bootcamp.nttdata.domain.entity.Card;
-import com.quarkus.bootcamp.nttdata.domain.entity.CardType;
 import com.quarkus.bootcamp.nttdata.infraestructure.entity.CardD;
 import com.quarkus.bootcamp.nttdata.infraestructure.entity.CardTypeD;
 import io.quarkus.test.junit.QuarkusTest;
