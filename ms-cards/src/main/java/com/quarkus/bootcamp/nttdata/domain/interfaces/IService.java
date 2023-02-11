@@ -1,5 +1,7 @@
 package com.quarkus.bootcamp.nttdata.domain.interfaces;
 
+import com.quarkus.bootcamp.nttdata.domain.services.CartTypeNotFoundException;
+
 import java.util.List;
 
 /**
@@ -36,7 +38,7 @@ public interface IService<T, U> {
    * @param t El elemento a crear.
    * @return El elemento creado.
    */
-  public U create(T t);
+  public U create(T t) throws CartTypeNotFoundException;
 
   /**
    * Actualiza un elemento en la BD. Se busca por el Id.
@@ -45,7 +47,7 @@ public interface IService<T, U> {
    * @param t  Elemento con los datos para guardar.
    * @return Retorna el elemento editado/actualizado.
    */
-  public U update(Long id, T t);
+  public U update(Long id, T t) throws CartTypeNotFoundException;
 
   /**
    * Realiza la eliminación del elemento de manera logica (softDelete).

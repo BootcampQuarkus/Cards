@@ -8,7 +8,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Entidad de base de datos para los tipo de tarjetas.
@@ -32,7 +32,7 @@ public class CardTypeD extends PanacheEntity {
    * El campo para hacer el mapping es cardTypeD.
    */
   @OneToMany(mappedBy = "cardTypeD", orphanRemoval = true)
-  protected Set<CardD> cardDs;
+  protected List<CardD> cardDs;
   /**
    * Fecha en la que se creó la linea de crédito.
    */

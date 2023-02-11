@@ -14,7 +14,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @QuarkusTest
 class CardTypeServiceTest {
@@ -24,6 +26,76 @@ class CardTypeServiceTest {
   CardTypeRepository repository;
   @Inject
   CardTypeMapper mapper;
+
+  public CardTypeD createCardTypeDWithoutCardDs(Long id, String name) {
+    CardTypeD cardTypeD = new CardTypeD();
+    cardTypeD.id = id;
+    cardTypeD.setName(name);
+    cardTypeD.setCardDs(new ArrayList<>());
+    cardTypeD.setCreatedAt("2023.01.01");
+    return cardTypeD;
+  }
+
+  public CardType createCardTypeWithoutCards(Long id, String name) {
+    CardType cardType = new CardType();
+    cardType.setId(id);
+    cardType.setName(name);
+    return cardType;
+  }
+
+  public CardTypeD createCardTypeDSoftDelet(Long id, String name) {
+    CardTypeD cardTypeD = new CardTypeD();
+    cardTypeD = this.createCardTypeDWithoutCardDs(id, name);
+    cardTypeD.setDeletedAt("2023.01.01");
+    return cardTypeD;
+  }
+
+  public CardTypeD createCardTypeDWithCardD(Long id, String name) {
+    CardTypeD cardTypeD = new CardTypeD();
+    cardTypeD.id = id;
+    cardTypeD.setName(name);
+    List<CardD> list = new ArrayList<>();
+    list.add(this.createCardDFake(1L));
+    cardTypeD.setCardDs(list);
+    cardTypeD.setCreatedAt("2023.01.01");
+    return cardTypeD;
+  }
+
+  public CardType createCardTypeWithCard(Long id, String name) {
+    CardType cardType = new CardType();
+    cardType.setId(id);
+    cardType.setName(name);
+    List<Card> list = new ArrayList<>();
+    list.add(this.createCardFake(1L));
+    cardType.setCards(list);
+    return cardType;
+  }
+
+  public CardD createCardDFake(Long id) {
+    CardD cardD = new CardD();
+    cardD.id = id;
+    cardD.setSerial("1234-1234-1234-1324");
+    cardD.setPin("1234");
+    cardD.setMonth(10);
+    cardD.setYear(2023);
+    cardD.setCvv(123);
+    cardD.setProductId(1L);
+    cardD.setCreatedAt("2023.01.01");
+    cardD.setCardTypeD(new CardTypeD());
+    return cardD;
+  }
+
+  public Card createCardFake(Long id) {
+    Card card = new Card();
+    card.setId(id);
+    card.setSerial("1234-1234-1234-1324");
+    card.setPin("1234");
+    card.setMonth(10);
+    card.setYear(2023);
+    card.setCvv(123);
+    card.setProductId(1L);
+    return card;
+  }
 
   /**
    * Cuando no se tiene elementos en la BD el metodo getAll debe retornar una lista vacia.
@@ -52,17 +124,9 @@ class CardTypeServiceTest {
   @Test
   void getAllValid() {
     List<CardTypeD> list = new ArrayList<>();
-    for (int i = 0 ; i <= 3 ;  i++){
-      CardTypeD cardTypeD = new CardTypeD();
-      Set<CardD> listCard = new HashSet<>();
-      for(int j = 0 ; j <= 3 ; j++){
-        CardD cardD = new CardD();
-        cardD.setCardTypeD(new CardTypeD());
-        listCard.add(cardD);
-      }
-      cardTypeD.setCardDs(listCard);
-      list.add(cardTypeD);
-    }
+    list.add(createCardTypeDWithoutCardDs(101L, "Credit"));
+    list.add(createCardTypeDWithoutCardDs(102L, "Debit"));
+
     Mockito.when(repository.getAll()).thenReturn(list);
     List<CardType> actual = service.getAll();
     Assertions.assertTrue(!actual.isEmpty());
@@ -75,20 +139,12 @@ class CardTypeServiceTest {
   @Test
   void getAllValidCount() {
     List<CardTypeD> list = new ArrayList<>();
-    for (int i = 0 ; i <= 3 ;  i++){
-      CardTypeD cardTypeD = new CardTypeD();
-      Set<CardD> listCard = new HashSet<>();
-      for(int j = 0 ; j <= 3 ; j++){
-        CardD cardD = new CardD();
-        cardD.setCardTypeD(new CardTypeD());
-        listCard.add(cardD);
-      }
-      cardTypeD.setCardDs(listCard);
-      list.add(cardTypeD);
-    }
+    list.add(createCardTypeDWithoutCardDs(101L, "Credit"));
+    list.add(createCardTypeDWithoutCardDs(102L, "Debit"));
+
     Mockito.when(repository.getAll()).thenReturn(list);
     List<CardType> actual = service.getAll();
-    Long expected = 4L;
+    Long expected = 2L;
     Assertions.assertEquals(expected, actual.stream().count());
   }
 
@@ -99,33 +155,13 @@ class CardTypeServiceTest {
   @Test
   void getAllValidNotDelete() {
     List<CardTypeD> list = new ArrayList<>();
-    for (int i = 0 ; i <= 2 ;  i++){
-      CardTypeD cardTypeD = new CardTypeD();
-      Set<CardD> listCard = new HashSet<>();
-      for(int j = 0 ; j <= 3 ; j++){
-        CardD cardD = new CardD();
-        cardD.setCardTypeD(new CardTypeD());
-        listCard.add(cardD);
-      }
-      cardTypeD.setCardDs(listCard);
-      list.add(cardTypeD);
-    }
-
-    // Objeto no valido
-    CardTypeD cardTypeD = new CardTypeD();
-    cardTypeD.setDeletedAt("2023.10.10");
-    Set<CardD> listCard = new HashSet<>();
-    for(int j = 0 ; j <= 3 ; j++){
-      CardD cardD = new CardD();
-      cardD.setCardTypeD(new CardTypeD());
-      listCard.add(cardD);
-    }
-    cardTypeD.setCardDs(listCard);
-    list.add(cardTypeD);
+    list.add(createCardTypeDWithoutCardDs(101L, "Credit"));
+    list.add(createCardTypeDWithoutCardDs(102L, "Debit"));
+    list.add(createCardTypeDSoftDelet(103L, "Delete"));
 
     Mockito.when(repository.getAll()).thenReturn(list);
     List<CardType> actual = service.getAll();
-    Long expected = 3L;
+    Long expected = 2L;
     Assertions.assertEquals(expected, actual.stream().count());
   }
 
@@ -143,17 +179,10 @@ class CardTypeServiceTest {
    * El metodo getById debe retornar un Dto.
    */
   @Test
-  void getByIdReturnAccount() {
+  void getByIdReturnCardType() {
     Long id = 101L;
-
-    CardTypeD cardTypeD = new CardTypeD();
-    Set<CardD> listCard = new HashSet<>();
-    for(int j = 0 ; j <= 3 ; j++){
-      CardD cardD = new CardD();
-      cardD.setCardTypeD(new CardTypeD());
-      listCard.add(cardD);
-    }
-    cardTypeD.setCardDs(listCard);
+    String name = "Credit";
+    CardTypeD cardTypeD = createCardTypeDWithoutCardDs(id, name);
 
     Mockito.when(repository.findByIdOptional(id)).thenReturn(Optional.of(cardTypeD));
     Assertions.assertInstanceOf(CardType.class, service.getById(id));
@@ -168,28 +197,8 @@ class CardTypeServiceTest {
     Long id = 101L;
     String name = "Credit";
 
-    CardTypeD cardTypeD = new CardTypeD();
-    cardTypeD.id = id;
-    cardTypeD.setName(name);
-    Set<CardD> listCardD = new HashSet<>();
-    CardD cardD = new CardD();
-    cardD.id = id;
-    cardD.setSerial("1234-1234-1234-1324");
-    cardD.setCardTypeD(new CardTypeD());
-    listCardD.add(cardD);
-    cardTypeD.setCardDs(listCardD);
-
-    // Resultado esperado
-    CardType expected = new CardType();
-    expected.setId(id);
-    expected.setName(name);
-    List<Card> listCard = new ArrayList<>();
-    Card card = new Card();
-    card.setId(id);
-    card.setSerial("1234-1234-1234-1324");
-    card.setCardType(null);
-    listCard.add(card);
-    expected.setCards(listCard);
+    CardTypeD cardTypeD = createCardTypeDWithCardD(id, name);
+    CardType expected = createCardTypeWithCard(id, name);
 
     Mockito.when(repository.findByIdOptional(id)).thenReturn(Optional.of(cardTypeD));
     CardType actual = service.getById(id);
@@ -203,10 +212,9 @@ class CardTypeServiceTest {
   @Test
   void getByIdDelete() {
     Long id = 101L;
-
+    String name = "Credit";
     // Input
-    CardTypeD cardTypeD = new CardTypeD();
-    cardTypeD.setDeletedAt("2023.01.01");
+    CardTypeD cardTypeD = createCardTypeDSoftDelet(id, name);
 
     Mockito.when(repository.findByIdOptional(id)).thenReturn(Optional.of(cardTypeD));
     Assertions.assertThrows(NotFoundException.class, () -> service.getById(id));
@@ -227,16 +235,13 @@ class CardTypeServiceTest {
   @Test
   void createValid() {
     // Variables
+    Long id = 101L;
     String name = "Debit";
-
     // Input
-    CardType cardType = new CardType();
-    cardType.setName(name);
-    CardType expected = cardType;
-
+    CardType cardType = createCardTypeWithCard(id, name);
+    CardType expected = createCardTypeWithoutCards(id, name);
     // Resultado esperado
-    CardTypeD cardTypeD = new CardTypeD();
-    cardTypeD.setName(name);
+    CardTypeD cardTypeD = createCardTypeDWithCardD(id, name);
 
     Mockito.when(repository.save(mapper.toDto(cardType))).thenReturn(cardTypeD);
     CardType actual = service.create(cardType);
@@ -265,18 +270,12 @@ class CardTypeServiceTest {
     String nameNew = "Debit";
 
     // Input
-    CardType cardType = new CardType();
-    cardType.setName(name);
-    CardType expected = cardType;
+    CardType cardType = createCardTypeWithoutCards(id, nameNew);
+    CardType expected = createCardTypeWithoutCards(id, nameNew);
 
     // Resultado esperado
-    CardTypeD cardTypeD = new CardTypeD();
-    cardTypeD.setName(name);
-    cardTypeD.setCreatedAt("2023.01.01");
-    // --
-    CardTypeD cardTypeDNew = new CardTypeD();
-    cardTypeDNew.setName(nameNew);
-    cardTypeDNew.setCreatedAt("2023.01.01");
+    CardTypeD cardTypeD = createCardTypeDWithCardD(id, name);
+    CardTypeD cardTypeDNew = createCardTypeDWithCardD(id, nameNew);
 
     Mockito.when(repository.findByIdOptional(id)).thenReturn(Optional.of(cardTypeD));
     Mockito.when(repository.save(cardTypeDNew)).thenReturn(cardTypeDNew);
@@ -293,7 +292,6 @@ class CardTypeServiceTest {
   void updateNotFound() {
     // Variables
     Long id = 101L;
-
     Mockito.when(repository.findByIdOptional(id)).thenThrow(new NotFoundException());
     Assertions.assertThrows(NotFoundException.class, () -> service.update(id, new CardType()));
   }
@@ -324,11 +322,11 @@ class CardTypeServiceTest {
    */
   @Test
   void deleteSoftDelete() {
-    CardTypeD cardTypeD = new CardTypeD();
-    cardTypeD.setDeletedAt("2023.10.10");
-
-    Mockito.when(repository.findByIdOptional(101L)).thenReturn(Optional.of(cardTypeD));
-    Assertions.assertThrows(NotFoundException.class, () -> service.delete(101L));
+    Long id = 101L;
+    String name = "Credit";
+    CardTypeD cardTypeD = createCardTypeDSoftDelet(id, name);
+    Mockito.when(repository.findByIdOptional(id)).thenReturn(Optional.of(cardTypeD));
+    Assertions.assertThrows(NotFoundException.class, () -> service.delete(id));
   }
 
   /**
@@ -336,19 +334,13 @@ class CardTypeServiceTest {
    */
   @Test
   void deleteValid() {
-    // Variables
+    Long id = 101L;
     String name = "Debit";
-
-    CardType expected = new CardType();
-    expected.setName(name);
-
-    CardTypeD cardTypeD = new CardTypeD();
-    cardTypeD.setName(name);
-
-    Mockito.when(repository.findByIdOptional(101L)).thenReturn(Optional.of(cardTypeD));
+    CardType expected = createCardTypeWithoutCards(id, name);
+    CardTypeD cardTypeD = createCardTypeDWithoutCardDs(id, name);
+    Mockito.when(repository.findByIdOptional(id)).thenReturn(Optional.of(cardTypeD));
     Mockito.when(repository.softDelete(cardTypeD)).thenReturn(cardTypeD);
-
-    CardType actual = service.delete(101L);
+    CardType actual = service.delete(id);
     Assertions.assertEquals(expected, actual);
   }
 }

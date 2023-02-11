@@ -2,6 +2,7 @@ package com.quarkus.bootcamp.nttdata.application;
 
 import com.quarkus.bootcamp.nttdata.domain.entity.Card;
 import com.quarkus.bootcamp.nttdata.domain.services.CardService;
+import com.quarkus.bootcamp.nttdata.domain.services.CartTypeNotFoundException;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
@@ -29,14 +30,26 @@ public class CardResource {
   @POST
   @Transactional
   public Response create(Card card) {
-    return Response.ok(service.create(card)).status(201).build();
+    Card cardNew;
+    try {
+      cardNew = service.create(card);
+    } catch (CartTypeNotFoundException e) {
+      return Response.ok(e.getMessage()).status(404).build();
+    }
+    return Response.ok(cardNew).status(201).build();
   }
 
   @PUT
   @Path("{id}")
   @Transactional
   public Response update(@PathParam("id") Long id, Card card) {
-    return Response.ok(service.update(id, card)).status(201).build();
+    Card cardUpdate;
+    try {
+      cardUpdate = service.update(id, card);
+    } catch (CartTypeNotFoundException e) {
+      return Response.ok(e.getMessage()).status(404).build();
+    }
+    return Response.ok(cardUpdate).status(201).build();
   }
 
   @DELETE

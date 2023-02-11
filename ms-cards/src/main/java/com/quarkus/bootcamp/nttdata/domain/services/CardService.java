@@ -20,6 +20,8 @@ public class CardService implements IService<Card, Card> {
   @Inject
   CardTypeRepository ctRepository;
   @Inject
+  CardTypeService ctService;
+  @Inject
   CardTypeMapper ctMapper;
   @Inject
   CardMapper cMapper;
@@ -50,20 +52,28 @@ public class CardService implements IService<Card, Card> {
   }
 
   @Override
-  public Card create(Card card) {
+  public Card create(Card card) throws CartTypeNotFoundException {
     CardD cardD = cMapper.toDto(card);
-    cardD.setCardTypeD(ctRepository.getById(card.getCardTypeId()));
+    try {
+      cardD.setCardTypeD(ctRepository.getById(card.getCardTypeId()));
+    } catch (NotFoundException e) {
+      throw new CartTypeNotFoundException("Cart Type not found.");
+    }
     return cMapper.toEntity(repository.save(cardD));
   }
 
   @Override
-  public Card update(Long id, Card card) {
+  public Card update(Long id, Card card) throws CartTypeNotFoundException {
     CardD cardD = repository.findByIdOptional(id)
           .filter(p -> (p.getDeletedAt() == null))
           .orElseThrow(() -> new NotFoundException());
     cardD.setPin(card.getPin());
     cardD.setSerial(card.getSerial());
-    cardD.setCardTypeD(ctMapper.toDto(card.getCardType()));
+    try {
+      cardD.setCardTypeD(ctRepository.getById(card.getCardTypeId()));
+    } catch (NotFoundException e) {
+      throw new CartTypeNotFoundException("Cart Type not found.");
+    }
     return cMapper.toEntity(repository.save(cardD));
   }
 
@@ -75,3 +85,4 @@ public class CardService implements IService<Card, Card> {
     return cMapper.toEntity(repository.softDelete(cardD));
   }
 }
+
