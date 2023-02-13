@@ -1,5 +1,8 @@
 package com.quarkus.bootcamp.nttdata.application;
 
+import com.quarkus.bootcamp.nttdata.domain.Exceptions.AccountNotFoundException;
+import com.quarkus.bootcamp.nttdata.domain.Exceptions.CartTypeNotFoundException;
+import com.quarkus.bootcamp.nttdata.domain.Exceptions.LineOfCreditNotFoundException;
 import com.quarkus.bootcamp.nttdata.domain.entity.Card;
 import com.quarkus.bootcamp.nttdata.domain.services.CardService;
 import jakarta.inject.Inject;
@@ -29,14 +32,34 @@ public class CardResource {
   @POST
   @Transactional
   public Response create(Card card) {
-    return Response.ok(service.create(card)).status(201).build();
+    Card cardNew;
+    try {
+      cardNew = service.create(card);
+    } catch (AccountNotFoundException e) {
+      return Response.ok(e.getMessage()).status(404).build();
+    } catch (CartTypeNotFoundException e) {
+      return Response.ok(e.getMessage()).status(404).build();
+    } catch (LineOfCreditNotFoundException e) {
+      return Response.ok(e.getMessage()).status(404).build();
+    }
+    return Response.ok(cardNew).status(201).build();
   }
 
   @PUT
   @Path("{id}")
   @Transactional
   public Response update(@PathParam("id") Long id, Card card) {
-    return Response.ok(service.update(id, card)).status(201).build();
+    Card cardUpdate;
+    try {
+      cardUpdate = service.update(id, card);
+    } catch (AccountNotFoundException e) {
+      return Response.ok(e.getMessage()).status(404).build();
+    } catch (CartTypeNotFoundException e) {
+      return Response.ok(e.getMessage()).status(404).build();
+    } catch (LineOfCreditNotFoundException e) {
+      throw new RuntimeException(e);
+    }
+    return Response.ok(cardUpdate).status(201).build();
   }
 
   @DELETE

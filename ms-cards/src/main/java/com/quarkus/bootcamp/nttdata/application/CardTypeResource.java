@@ -2,11 +2,13 @@ package com.quarkus.bootcamp.nttdata.application;
 
 import com.quarkus.bootcamp.nttdata.domain.entity.CardType;
 import com.quarkus.bootcamp.nttdata.domain.services.CardTypeService;
+import com.quarkus.bootcamp.nttdata.infraestructure.Resources.ILineOfCreditApi;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @Path("/cardtypes")
 @Produces(MediaType.APPLICATION_JSON)
@@ -14,6 +16,8 @@ import jakarta.ws.rs.core.Response;
 public class CardTypeResource {
   @Inject
   CardTypeService service;
+  @RestClient
+  ILineOfCreditApi api;
 
   @GET
   public Response getAll() {

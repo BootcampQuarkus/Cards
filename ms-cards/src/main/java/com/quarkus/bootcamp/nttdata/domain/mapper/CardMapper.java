@@ -19,7 +19,6 @@ public class CardMapper implements IMapper<Card, CardD> {
     CardD cardD = new CardD();
     cardD.setSerial(card.getSerial());
     cardD.setPin(card.getPin());
-    cardD.setPin(card.getPin());
     cardD.setMonth(card.getMonth());
     cardD.setYear(card.getYear());
     cardD.setCvv(card.getCvv());

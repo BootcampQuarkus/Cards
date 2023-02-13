@@ -11,7 +11,6 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class CardTypeService implements IService<CardType, CardType> {
@@ -29,12 +28,11 @@ public class CardTypeService implements IService<CardType, CardType> {
           .filter(p -> (p.getDeletedAt() == null))
           .map(p -> {
             CardType cardType = ctMapper.toEntity(p);
-            var a = p.getCardDs();
-            var b = a.stream();
-            var c = b.filter(r -> (r.getDeletedAt() == null));
-            var d = c.map(q -> cMapper.toEntity(q));
-            var e = d.toList();
-            cardType.setCards(e);
+            cardType.setCards(p.getCardDs()
+                  .stream()
+                  .filter(r -> (r.getDeletedAt() == null))
+                  .map(q -> cMapper.toEntity(q))
+                  .toList());
             return cardType;
           })
           .toList();
