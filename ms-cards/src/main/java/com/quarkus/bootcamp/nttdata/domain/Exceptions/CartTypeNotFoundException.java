@@ -1,4 +1,4 @@
-package com.quarkus.bootcamp.nttdata.domain.services;
+package com.quarkus.bootcamp.nttdata.domain.Exceptions;
 
 public class CartTypeNotFoundException extends Exception {
   public CartTypeNotFoundException(String errorMessage) {

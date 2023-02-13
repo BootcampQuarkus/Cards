@@ -1,8 +1,10 @@
 package com.quarkus.bootcamp.nttdata.application;
 
+import com.quarkus.bootcamp.nttdata.domain.Exceptions.AccountNotFoundException;
+import com.quarkus.bootcamp.nttdata.domain.Exceptions.CartTypeNotFoundException;
+import com.quarkus.bootcamp.nttdata.domain.Exceptions.LineOfCreditNotFoundException;
 import com.quarkus.bootcamp.nttdata.domain.entity.Card;
 import com.quarkus.bootcamp.nttdata.domain.services.CardService;
-import com.quarkus.bootcamp.nttdata.domain.services.CartTypeNotFoundException;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
@@ -33,7 +35,11 @@ public class CardResource {
     Card cardNew;
     try {
       cardNew = service.create(card);
+    } catch (AccountNotFoundException e) {
+      return Response.ok(e.getMessage()).status(404).build();
     } catch (CartTypeNotFoundException e) {
+      return Response.ok(e.getMessage()).status(404).build();
+    } catch (LineOfCreditNotFoundException e) {
       return Response.ok(e.getMessage()).status(404).build();
     }
     return Response.ok(cardNew).status(201).build();
@@ -46,8 +52,12 @@ public class CardResource {
     Card cardUpdate;
     try {
       cardUpdate = service.update(id, card);
+    } catch (AccountNotFoundException e) {
+      return Response.ok(e.getMessage()).status(404).build();
     } catch (CartTypeNotFoundException e) {
       return Response.ok(e.getMessage()).status(404).build();
+    } catch (LineOfCreditNotFoundException e) {
+      throw new RuntimeException(e);
     }
     return Response.ok(cardUpdate).status(201).build();
   }
