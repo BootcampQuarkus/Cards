@@ -1,5 +1,6 @@
 package com.quarkus.bootcamp.nttdata.infraestructure.repository;
 
+import com.quarkus.bootcamp.nttdata.infraestructure.entity.AccountD;
 import com.quarkus.bootcamp.nttdata.infraestructure.entity.CardD;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.NotFoundException;
@@ -69,5 +70,10 @@ public class CardRepository implements IRepository<CardD> {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu.MM.dd.HH:mm:ss");
     cardD.setDeletedAt(ZonedDateTime.now(ZoneId.systemDefault()).format(formatter));
     return this.save(cardD);
+  }
+
+  public List<CardD> findByCustomerId(Long id) {
+    return CardD.find("customerId", id)
+          .list();
   }
 }

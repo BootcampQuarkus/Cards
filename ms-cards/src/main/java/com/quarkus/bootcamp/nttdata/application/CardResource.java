@@ -19,8 +19,10 @@ public class CardResource {
   CardService service;
 
   @GET
-  public Response getAll() {
-    return Response.ok(service.getAll()).build();
+  public Response getAll(@QueryParam("customerId") Long customerId) {
+    return ( customerId != null )?
+          Response.ok(service.getAll(customerId)).build():
+          Response.ok(service.getAll()).build();
   }
 
   @GET
