@@ -71,9 +71,4 @@ public class CardRepository implements IRepository<CardD> {
     cardD.setDeletedAt(ZonedDateTime.now(ZoneId.systemDefault()).format(formatter));
     return this.save(cardD);
   }
-
-  public List<CardD> findByCustomerId(Long id) {
-    return CardD.find("customerId", id)
-          .list();
-  }
 }

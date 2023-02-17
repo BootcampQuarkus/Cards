@@ -2,6 +2,7 @@ package com.quarkus.bootcamp.nttdata.infraestructure.Resources;
 
 import com.quarkus.bootcamp.nttdata.infraestructure.entity.AccountD;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import org.eclipse.microprofile.faulttolerance.Fallback;
@@ -26,4 +27,11 @@ public interface IAccountApi {
     return new AccountD();
   }
 
+  @PUT
+  @Path("/{id}")
+  @Fallback(fallbackMethod = "fallbackupdate")
+  AccountD update(@PathParam("id")Long id, AccountD accountD);
+  default AccountD fallbackupdate(Long id, AccountD accountD) {
+    return new AccountD();
+  }
 }
