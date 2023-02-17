@@ -50,18 +50,6 @@ public class CardService implements IService<Card, Card> {
           })
           .toList();
   }
-
-  public List<Card> getAll(Long customerId) {
-    return repository.findByCustomerId(customerId)
-          .stream()
-          .filter(p -> (p.getDeletedAt() == null))
-          .map(p -> {
-            Card card = cMapper.toEntity(p);
-            card.setCardType(ctMapper.toEntity(p.getCardTypeD()));
-            return card;
-          })
-          .toList();
-  }
   @Override
   public Card getById(Long id) {
     return repository.findByIdOptional(id)
@@ -87,7 +75,9 @@ public class CardService implements IService<Card, Card> {
     } else if (cardD.getCardTypeD().getName().equals("Debit")) {
       validateAccountD(card.getProductId());
     }
-    return cMapper.toEntity(repository.save(cardD));
+    card = cMapper.toEntity(repository.save(cardD));
+    updateAccountD(card);
+    return card;
   }
 
   @Override
@@ -138,6 +128,14 @@ public class CardService implements IService<Card, Card> {
       throw new LineOfCreditNotFoundException("LineOfCredit not found.");
     }
     return true;
+  }
+  public void updateAccountD(Card card) throws AccountNotFoundException {
+    AccountD accountD = accountApi.getById(card.getProductId());
+    if (accountD.getId() == null) {
+      throw new AccountNotFoundException("Account not found.");
+    }
+    accountD.setCardId(card.getId());
+    accountApi.update(accountD.getId(),accountD);
   }
 }
 

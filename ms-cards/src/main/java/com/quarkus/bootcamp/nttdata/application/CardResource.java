@@ -11,6 +11,8 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import java.util.List;
+
 @Path("/cards")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -19,10 +21,13 @@ public class CardResource {
   CardService service;
 
   @GET
-  public Response getAll(@QueryParam("customerId") Long customerId) {
-    return ( customerId != null )?
-          Response.ok(service.getAll(customerId)).build():
-          Response.ok(service.getAll()).build();
+  public Response getAll(@QueryParam("customerId") Long customerId, @QueryParam("cardTypeId") Long cardTypeId) {
+    List<Card> cadsList = service.getAll();
+    if( customerId != null )
+      cadsList = cadsList.stream().filter(p -> p.getCustomerId().equals(customerId)).toList();
+    if( cardTypeId != null )
+      cadsList = cadsList.stream().filter(p -> p.getCardTypeId().equals(cardTypeId)).toList();
+    return Response.ok(cadsList).build();
   }
 
   @GET
@@ -37,11 +42,7 @@ public class CardResource {
     Card cardNew;
     try {
       cardNew = service.create(card);
-    } catch (AccountNotFoundException e) {
-      return Response.ok(e.getMessage()).status(404).build();
-    } catch (CartTypeNotFoundException e) {
-      return Response.ok(e.getMessage()).status(404).build();
-    } catch (LineOfCreditNotFoundException e) {
+    } catch (AccountNotFoundException | LineOfCreditNotFoundException | CartTypeNotFoundException e) {
       return Response.ok(e.getMessage()).status(404).build();
     }
     return Response.ok(cardNew).status(201).build();
@@ -54,12 +55,8 @@ public class CardResource {
     Card cardUpdate;
     try {
       cardUpdate = service.update(id, card);
-    } catch (AccountNotFoundException e) {
+    } catch (AccountNotFoundException | CartTypeNotFoundException | LineOfCreditNotFoundException e) {
       return Response.ok(e.getMessage()).status(404).build();
-    } catch (CartTypeNotFoundException e) {
-      return Response.ok(e.getMessage()).status(404).build();
-    } catch (LineOfCreditNotFoundException e) {
-      throw new RuntimeException(e);
     }
     return Response.ok(cardUpdate).status(201).build();
   }
